@@ -1,5 +1,7 @@
 # VanillaCommands
 
+#### Depends on [SulfurPermissions](https://github.com/SulfurMinecraft/SulfurPermissions)
+
 A [Sulfur](https://github.com/SulfurMinecraft/Sulfur) plugin
 \
 Made to bring vanilla Minecraft commands to Sulfur
