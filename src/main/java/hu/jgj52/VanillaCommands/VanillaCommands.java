@@ -1,8 +1,7 @@
 package hu.jgj52.VanillaCommands;
 
 import hu.jgj52.Sulfur.Utils.Plugin;
-import hu.jgj52.VanillaCommands.Commands.GameModeCommand;
-import hu.jgj52.VanillaCommands.Commands.TeleportCommand;
+import hu.jgj52.VanillaCommands.Commands.*;
 import hu.jgj52.VanillaCommands.Listeners.GameModeRequestListener;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -16,6 +15,9 @@ public class VanillaCommands implements Plugin {
 
         MinecraftServer.getCommandManager().register(new GameModeCommand());
         MinecraftServer.getCommandManager().register(new TeleportCommand());
+        MinecraftServer.getCommandManager().register(new GiveCommand());
+        MinecraftServer.getCommandManager().register(new ClearCommand());
+
         MinecraftServer.getCommandManager().setUnknownCommandCallback((sender, command) -> {
             sender.sendMessage(Component.translatable("command.unknown.command").color(NamedTextColor.RED));
             sender.sendMessage(Component.text(command).decorate(TextDecoration.UNDERLINED).color(NamedTextColor.RED).append(Component.translatable("command.context.here").color(NamedTextColor.RED).decoration(TextDecoration.UNDERLINED, false)));
