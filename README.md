@@ -23,4 +23,4 @@ Made to bring vanilla Minecraft commands to Sulfur
 | locate     | planned |                          |
 | playsound  | planned |                          |
 
-Feel free to open an issue if you want to request another onen
+Feel free to open an issue if you want to request another one
