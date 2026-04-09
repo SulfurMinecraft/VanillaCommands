@@ -11,7 +11,7 @@ Made to bring vanilla Minecraft commands to Sulfur
 | gamemode   | done        | vanilla.command.gamemode |
 | teleport   | done        | vanilla.command.teleport |
 | give       | in-progress | vanilla.command.give     |
-| clear      | in-progress | vanilla.command.clear    |
+| clear      | done        | vanilla.command.clear    |
 | msg        | planned     |                          |
 | time       | planned     |                          |
 | weather    | planned     |                          |
