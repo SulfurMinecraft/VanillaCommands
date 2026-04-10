@@ -17,6 +17,7 @@ public class VanillaCommands implements Plugin {
         MinecraftServer.getCommandManager().register(new TeleportCommand());
         MinecraftServer.getCommandManager().register(new GiveCommand());
         MinecraftServer.getCommandManager().register(new ClearCommand());
+        MinecraftServer.getCommandManager().register(new DifficultyCommand());
 
         MinecraftServer.getCommandManager().setUnknownCommandCallback((sender, command) -> {
             sender.sendMessage(Component.translatable("command.unknown.command").color(NamedTextColor.RED));
