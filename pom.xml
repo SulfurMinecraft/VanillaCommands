@@ -36,13 +36,7 @@
         <dependency>
             <groupId>hu.jgj52</groupId>
             <artifactId>Sulfur</artifactId>
-            <version>1.4</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>hu.jgj52</groupId>
-            <artifactId>SulfurPermissions</artifactId>
-            <version>1.1</version>
+            <version>1.6</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

@@ -16,7 +16,7 @@ Made to bring vanilla Minecraft commands to Sulfur
 | time       | planned     |                            |
 | weather    | planned     |                            |
 | difficulty | done        | vanilla.command.difficulty |
-| effect     | in-progress |                            |
+| effect     | in-progress | vanilla.command.effect     |
 | xp         | planned     |                            |
 | summon     | planned     |                            |
 | seed       | planned     |                            |

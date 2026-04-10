@@ -1,6 +1,6 @@
 package hu.jgj52.VanillaCommands.Commands;
 
-import hu.jgj52.SulfurPermissions.Utils.PermissionManager;
+import hu.jgj52.Sulfur.Permissions.User;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -25,7 +25,7 @@ public class GameModeCommand extends Command {
             survival
         }
 
-        setCondition((commandSender, _) -> !(commandSender instanceof Player player) || new PermissionManager(player, "vanilla.command").has("gamemode"));
+        setCondition((commandSender, _) -> !(commandSender instanceof Player player) || new User(player).has("vanilla.command.gamemode"));
 
         setDefaultExecutor((sender, context) -> {
                 sender.sendMessage(Component.translatable("command.unknown.command").color(NamedTextColor.RED));
