@@ -13,8 +13,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class GameModeListener extends Listener {
-
-    private Map<UUID, Boolean> wasInvisible = new HashMap<>();
+    private final Map<UUID, Boolean> wasInvisible = new HashMap<>();
 
     @Event
     public void onRequest(PlayerGameModeRequestEvent event) {
@@ -25,21 +24,21 @@ public class GameModeListener extends Listener {
     }
 
     @Event
-    public void onGamemodeChange(PlayerGameModeChangeEvent event) {
+    public void onChange(PlayerGameModeChangeEvent event) {
 
         Player player = event.getPlayer();
         UUID uuid = player.getUuid();
+        GameMode from = player.getGameMode();
+        GameMode to = event.getNewGameMode();
 
-        if (player.getGameMode().equals(GameMode.SPECTATOR)) player.setInvisible(wasInvisible.getOrDefault(uuid, false));
+        if (from == GameMode.SPECTATOR && to != GameMode.SPECTATOR) {
+            player.setInvisible(wasInvisible.getOrDefault(uuid, false));
+            wasInvisible.remove(uuid);
+        }
 
-        if (event.getNewGameMode().equals(GameMode.SPECTATOR)) {
-
-            player.setInvisible(true);
-
-            if (player.getGameMode().equals(GameMode.SPECTATOR)) return;
-
+        if (from != GameMode.SPECTATOR && to == GameMode.SPECTATOR) {
             wasInvisible.put(uuid, player.isInvisible());
-
+            player.setInvisible(true);
         }
 
     }
