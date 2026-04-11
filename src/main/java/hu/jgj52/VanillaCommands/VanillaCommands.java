@@ -2,7 +2,7 @@ package hu.jgj52.VanillaCommands;
 
 import hu.jgj52.Sulfur.Utils.Plugin;
 import hu.jgj52.VanillaCommands.Commands.*;
-import hu.jgj52.VanillaCommands.Listeners.GameModeRequestListener;
+import hu.jgj52.VanillaCommands.Listeners.GameModeListener;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -11,7 +11,7 @@ import net.minestom.server.MinecraftServer;
 public class VanillaCommands implements Plugin {
     @Override
     public void onEnable() {
-        new GameModeRequestListener();
+        new GameModeListener();
 
         MinecraftServer.getCommandManager().register(new GameModeCommand());
         MinecraftServer.getCommandManager().register(new TeleportCommand());

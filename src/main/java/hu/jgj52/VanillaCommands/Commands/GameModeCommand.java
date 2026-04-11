@@ -41,6 +41,7 @@ public class GameModeCommand extends Command {
 
             gamemodes gm = context.get(gamemode);
             GameMode gameMode = GameMode.valueOf(gm.name().toUpperCase());
+
             player.setGameMode(gameMode);
             player.sendMessage(Component.translatable("commands.gamemode.success.self", Component.translatable("gameMode." + gm.name())));
         }, gamemode);
