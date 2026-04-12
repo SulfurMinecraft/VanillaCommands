@@ -1,21 +1,20 @@
 package hu.jgj52.VanillaCommands.Commands;
 
 import hu.jgj52.Sulfur.Permissions.User;
-import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.CommandExecutor;
-import net.minestom.server.command.builder.arguments.ArgumentBoolean;
-import net.minestom.server.command.builder.arguments.ArgumentLiteral;
-import net.minestom.server.command.builder.arguments.ArgumentType;
+import net.minestom.server.command.builder.arguments.*;
 import net.minestom.server.command.builder.arguments.minecraft.ArgumentEntity;
 import net.minestom.server.command.builder.arguments.minecraft.ArgumentResourceLocation;
 import net.minestom.server.command.builder.arguments.number.ArgumentInteger;
 import net.minestom.server.command.builder.suggestion.SuggestionEntry;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.Player;
+import net.minestom.server.potion.Potion;
 import net.minestom.server.potion.PotionEffect;
 import net.minestom.server.potion.TimedPotion;
 
@@ -35,11 +34,6 @@ public class EffectCommand extends Command {
             sender.sendMessage(Component.text(context.getInput()).color(NamedTextColor.GRAY).append(here));
         });
 
-        enum whatodo {
-            clear,
-            give
-        }
-
         ArgumentLiteral clearArg = ArgumentType.Literal("clear");
         ArgumentLiteral giveArg = ArgumentType.Literal("give");
         ArgumentEntity entityArg = ArgumentType.Entity("targets");
@@ -56,14 +50,10 @@ public class EffectCommand extends Command {
                         .toList();
 
         effectArg.setSuggestionCallback((_, context, suggestion) -> {
-            Key searchK = context.get(effectArg);
-            if (searchK == null) {
-                suggest.forEach(suggestion::addEntry);
-                return;
-            }
-            String search = searchK.asString();
+            String search = context.getRaw(effectArg);
+            System.out.println(search);
             suggest.forEach(s -> {
-                if (search.isBlank()) {
+                if (search == null || search.isBlank()) {
                     suggestion.addEntry(s);
                     return;
                 }
@@ -87,9 +77,7 @@ public class EffectCommand extends Command {
                 entity.clearEffects();
                 sender.sendMessage(Component.translatable(
                         "commands.effect.clear.everything.success.single",
-                        entity instanceof Player player
-                        ? Component.text(player.getUsername())
-                        : Component.translatable(entity.getEntityType().registry().translationKey())
+                        name(entity)
                 ));
             }
         }, clearArg);
@@ -129,7 +117,6 @@ public class EffectCommand extends Command {
                 Entity entity = entities.getFirst();
 
                 empty = entity.getActiveEffects().isEmpty();
-                entity.clearEffects();
 
                 if (empty) {
                     sender.sendMessage(Component.translatable(
@@ -139,9 +126,7 @@ public class EffectCommand extends Command {
                     entity.clearEffects();
                     sender.sendMessage(Component.translatable(
                             "commands.effect.clear.everything.success.single",
-                            entity instanceof Player player
-                                    ? Component.text(player.getUsername())
-                                    : Component.translatable(entity.getEntityType().registry().translationKey())
+                            name(entity)
                     ));
                 }
             }
@@ -208,16 +193,221 @@ public class EffectCommand extends Command {
                             "commands.effect.clear.specific.failed"
                     ).color(NamedTextColor.RED));
                 } else {
-                    entity.clearEffects();
                     sender.sendMessage(Component.translatable(
                             "commands.effect.clear.specific.success.single",
                             Component.translatable(effect.registry().translationKey()),
-                            entity instanceof Player player
-                                    ? Component.text(player.getUsername())
-                                    : Component.translatable(entity.getEntityType().registry().translationKey())
+                            name(entity)
                     ));
                 }
             }
         }, clearArg, entityArg, effectArg);
+
+        addSyntax((sender, context) -> {
+            List<Entity> entities = context.get(entityArg).find(sender);
+            PotionEffect effect = PotionEffect.fromKey(context.get(effectArg));
+            if (effect == null) {
+                CommandExecutor defaultE = getDefaultExecutor();
+                if (defaultE == null) return;
+                defaultE.apply(sender, context);
+                return;
+            }
+            if (entities.isEmpty()) {
+                sender.sendMessage(Component.translatable(
+                        "argument.entity.notfound.entity"
+                ).color(NamedTextColor.RED));
+                return;
+            }
+            Potion potion = new Potion(effect, 0, 600);
+
+            give(entities, potion, sender, effect);
+        }, giveArg, entityArg, effectArg);
+
+        addSyntax((sender, context) -> {
+            List<Entity> entities = context.get(entityArg).find(sender);
+            PotionEffect effect = PotionEffect.fromKey(context.get(effectArg));
+            if (effect == null) {
+                CommandExecutor defaultE = getDefaultExecutor();
+                if (defaultE == null) return;
+                defaultE.apply(sender, context);
+                return;
+            }
+            if (entities.isEmpty()) {
+                sender.sendMessage(Component.translatable(
+                        "argument.entity.notfound.entity"
+                ).color(NamedTextColor.RED));
+                return;
+            }
+            Potion potion = new Potion(effect, 0, Potion.INFINITE_DURATION);
+
+            give(entities, potion, sender, effect);
+        }, giveArg, entityArg, effectArg, infiniteArg);
+
+        addSyntax((sender, context) -> {
+            List<Entity> entities = context.get(entityArg).find(sender);
+            PotionEffect effect = PotionEffect.fromKey(context.get(effectArg));
+            if (effect == null) {
+                CommandExecutor defaultE = getDefaultExecutor();
+                if (defaultE == null) return;
+                defaultE.apply(sender, context);
+                return;
+            }
+            if (entities.isEmpty()) {
+                sender.sendMessage(Component.translatable(
+                        "argument.entity.notfound.entity"
+                ).color(NamedTextColor.RED));
+                return;
+            }
+            int ticks = context.get(secondsArg);
+            Potion potion = new Potion(effect, 0, ticks * 20);
+
+            give(entities, potion, sender, effect);
+        }, giveArg, entityArg, effectArg, secondsArg);
+
+        addSyntax((sender, context) -> {
+            List<Entity> entities = context.get(entityArg).find(sender);
+            PotionEffect effect = PotionEffect.fromKey(context.get(effectArg));
+            if (effect == null) {
+                CommandExecutor defaultE = getDefaultExecutor();
+                if (defaultE == null) return;
+                defaultE.apply(sender, context);
+                return;
+            }
+            if (entities.isEmpty()) {
+                sender.sendMessage(Component.translatable(
+                        "argument.entity.notfound.entity"
+                ).color(NamedTextColor.RED));
+                return;
+            }
+            int amplifier = context.get(amplifierArg);
+            Potion potion = new Potion(effect, amplifier, Potion.INFINITE_DURATION);
+
+            give(entities, potion, sender, effect);
+        }, giveArg, entityArg, effectArg, infiniteArg, amplifierArg);
+
+        addSyntax((sender, context) -> {
+            List<Entity> entities = context.get(entityArg).find(sender);
+            PotionEffect effect = PotionEffect.fromKey(context.get(effectArg));
+            if (effect == null) {
+                CommandExecutor defaultE = getDefaultExecutor();
+                if (defaultE == null) return;
+                defaultE.apply(sender, context);
+                return;
+            }
+            if (entities.isEmpty()) {
+                sender.sendMessage(Component.translatable(
+                        "argument.entity.notfound.entity"
+                ).color(NamedTextColor.RED));
+                return;
+            }
+            int ticks = context.get(secondsArg);
+            int amplifier = context.get(amplifierArg);
+            Potion potion = new Potion(effect, amplifier, ticks * 20);
+
+            give(entities, potion, sender, effect);
+        }, giveArg, entityArg, effectArg, secondsArg, amplifierArg);
+
+        addSyntax((sender, context) -> {
+            List<Entity> entities = context.get(entityArg).find(sender);
+            PotionEffect effect = PotionEffect.fromKey(context.get(effectArg));
+            if (effect == null) {
+                CommandExecutor defaultE = getDefaultExecutor();
+                if (defaultE == null) return;
+                defaultE.apply(sender, context);
+                return;
+            }
+            if (entities.isEmpty()) {
+                sender.sendMessage(Component.translatable(
+                        "argument.entity.notfound.entity"
+                ).color(NamedTextColor.RED));
+                return;
+            }
+            int amplifier = context.get(amplifierArg);
+            boolean hide = context.get(hideArg);
+            Potion potion = hide
+                    ? new Potion(effect, amplifier, Potion.INFINITE_DURATION, Potion.PARTICLES_FLAG)
+                    : new Potion(effect, amplifier, Potion.INFINITE_DURATION);
+
+            give(entities, potion, sender, effect);
+        }, giveArg, entityArg, effectArg, infiniteArg, amplifierArg, hideArg);
+
+        addSyntax((sender, context) -> {
+            List<Entity> entities = context.get(entityArg).find(sender);
+            PotionEffect effect = PotionEffect.fromKey(context.get(effectArg));
+            if (effect == null) {
+                CommandExecutor defaultE = getDefaultExecutor();
+                if (defaultE == null) return;
+                defaultE.apply(sender, context);
+                return;
+            }
+            if (entities.isEmpty()) {
+                sender.sendMessage(Component.translatable(
+                        "argument.entity.notfound.entity"
+                ).color(NamedTextColor.RED));
+                return;
+            }
+            int ticks = context.get(secondsArg);
+            int amplifier = context.get(amplifierArg);
+            boolean hide = context.get(hideArg);
+            Potion potion = hide
+                    ? new Potion(effect, amplifier, ticks * 20, Potion.PARTICLES_FLAG)
+                    : new Potion(effect, amplifier, ticks * 20);
+
+            give(entities, potion, sender, effect);
+        }, giveArg, entityArg, effectArg, secondsArg, amplifierArg, hideArg);
+    }
+
+    private Component name(Entity entity) {
+        return entity instanceof Player player
+                ? Component.text(player.getUsername())
+                : Component.translatable(entity.getEntityType().registry().translationKey());
+    }
+
+    private void give(List<Entity> entities, Potion potion, CommandSender sender, PotionEffect effect) {
+        int size = entities.size();
+        if (size > 1) {
+            int errs = 0;
+            for (Entity entity : entities) {
+                TimedPotion pot = entity.getEffect(effect);
+                if (pot != null) {
+                    int duration = pot.potion().duration();
+                    if (duration > potion.duration() || (duration == Potion.INFINITE_DURATION && potion.duration() != Potion.INFINITE_DURATION) || pot.potion().amplifier() > potion.amplifier()) {
+                        errs++;
+                        continue;
+                    }
+                }
+                entity.addEffect(potion);
+            }
+
+            if (errs >= size) {
+                sender.sendMessage(Component.translatable(
+                        "commands.effect.give.failed"
+                ).color(NamedTextColor.RED));
+            }
+
+            sender.sendMessage(Component.translatable(
+                    "commands.effect.give.success.multiple",
+                    Component.translatable(effect.registry().translationKey()),
+                    Component.text(size)
+            ));
+        } else {
+            Entity entity = entities.getFirst();
+            TimedPotion pot = entity.getEffect(effect);
+            if (pot != null) {
+                int duration = pot.potion().duration();
+                if (duration > potion.duration() || (duration == Potion.INFINITE_DURATION && potion.duration() != Potion.INFINITE_DURATION) || pot.potion().amplifier() > potion.amplifier()) {
+                    sender.sendMessage(Component.translatable(
+                            "commands.effect.give.failed"
+                    ).color(NamedTextColor.RED));
+                    return;
+                }
+            }
+            entity.addEffect(potion);
+
+            sender.sendMessage(Component.translatable(
+                    "commands.effect.give.success.single",
+                    Component.translatable(effect.registry().translationKey()),
+                    name(entity)
+            ));
+        }
     }
 }
