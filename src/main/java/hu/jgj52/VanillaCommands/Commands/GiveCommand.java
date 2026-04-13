@@ -1,10 +1,10 @@
 package hu.jgj52.VanillaCommands.Commands;
 
-import hu.jgj52.Sulfur.Permissions.User;
+import dev.sulfurmc.Sulfur.Permissions.User;
+import dev.sulfurmc.Sulfur.Utils.SulfurCommand;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.arguments.ArgumentType;
 import net.minestom.server.command.builder.arguments.minecraft.ArgumentEntity;
 import net.minestom.server.command.builder.arguments.minecraft.ArgumentItemStack;
@@ -15,7 +15,7 @@ import net.minestom.server.item.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GiveCommand extends Command {
+public class GiveCommand extends SulfurCommand {
     public GiveCommand() {
         super("give");
 

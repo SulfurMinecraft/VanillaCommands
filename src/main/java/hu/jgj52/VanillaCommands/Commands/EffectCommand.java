@@ -1,11 +1,11 @@
 package hu.jgj52.VanillaCommands.Commands;
 
-import hu.jgj52.Sulfur.Permissions.User;
+import dev.sulfurmc.Sulfur.Permissions.User;
+import dev.sulfurmc.Sulfur.Utils.SulfurCommand;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.minestom.server.command.CommandSender;
-import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.CommandExecutor;
 import net.minestom.server.command.builder.arguments.*;
 import net.minestom.server.command.builder.arguments.minecraft.ArgumentEntity;
@@ -21,7 +21,7 @@ import net.minestom.server.potion.TimedPotion;
 import java.util.*;
 
 @SuppressWarnings("ConstantConditions")
-public class EffectCommand extends Command {
+public class EffectCommand extends SulfurCommand {
     public EffectCommand() {
         super("effect");
 

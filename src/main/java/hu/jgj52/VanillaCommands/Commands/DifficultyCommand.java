@@ -1,17 +1,17 @@
 package hu.jgj52.VanillaCommands.Commands;
 
-import hu.jgj52.Sulfur.Permissions.User;
+import dev.sulfurmc.Sulfur.Permissions.User;
+import dev.sulfurmc.Sulfur.Utils.SulfurCommand;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.minestom.server.MinecraftServer;
-import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.arguments.ArgumentEnum;
 import net.minestom.server.command.builder.arguments.ArgumentType;
 import net.minestom.server.entity.Player;
 import net.minestom.server.world.Difficulty;
 
-public class DifficultyCommand extends Command {
+public class DifficultyCommand extends SulfurCommand {
     public DifficultyCommand() {
         super("difficulty");
 
