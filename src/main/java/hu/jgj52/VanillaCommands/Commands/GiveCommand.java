@@ -21,7 +21,7 @@ public class GiveCommand extends SulfurCommand {
 
         Component here = Component.translatable("command.context.here").color(NamedTextColor.RED).decoration(TextDecoration.UNDERLINED, false);
 
-        setCondition((commandSender, _) -> !(commandSender instanceof Player player) || new User(player).has("vanilla.command.give"));
+        setCondition((commandSender, _) -> !(commandSender instanceof Player player) || player.hasPermission("vanilla.command.give"));
 
         setDefaultExecutor((sender, context) -> {
             sender.sendMessage(Component.translatable("command.unknown.command").color(NamedTextColor.RED));

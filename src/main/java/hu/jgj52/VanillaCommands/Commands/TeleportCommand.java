@@ -21,7 +21,7 @@ public class TeleportCommand extends SulfurCommand {
 
         Component here = Component.translatable("command.context.here").color(NamedTextColor.RED).decoration(TextDecoration.UNDERLINED, false);
 
-        setCondition((commandSender, _) -> !(commandSender instanceof Player player) || new User(player).has("vanilla.command.teleport"));
+        setCondition((commandSender, _) -> !(commandSender instanceof Player player) || player.hasPermission("vanilla.command.teleport"));
 
         setDefaultExecutor((sender, context) -> {
             sender.sendMessage(Component.translatable("command.unknown.command").color(NamedTextColor.RED));
@@ -52,14 +52,14 @@ public class TeleportCommand extends SulfurCommand {
 
         addSyntax((sender, context) -> {
             if (sender instanceof Entity entity) {
-                Pos position = context.get(pos).from(entity.getPosition()).asPos();
+                Pos position = context.get(pos).from(entity.getPosition()).asPos().withYaw(entity.getPosition().yaw()).withPitch(entity.getPosition().pitch());
                 entity.teleport(position);
                 sender.sendMessage(Component.translatable(
                         "commands.teleport.success.location.single",
                         name(entity),
-                        Component.text(position.x()),
-                        Component.text(position.y()),
-                        Component.text(position.z())
+                        Component.text(pos(position.x())),
+                        Component.text(pos(position.y())),
+                        Component.text(pos(position.z()))
                 ));
             } else {
                 sender.sendMessage(Component.translatable("permissions.requires.entity").color(NamedTextColor.RED));
@@ -75,9 +75,9 @@ public class TeleportCommand extends SulfurCommand {
                 sender.sendMessage(Component.translatable(
                         "commands.teleport.success.location.single",
                         name(entity),
-                        Component.text(position.x()),
-                        Component.text(position.y()),
-                        Component.text(position.z())
+                        Component.text(pos(position.x())),
+                        Component.text(pos(position.y())),
+                        Component.text(pos(position.z()))
                 ));
             } else {
                 sender.sendMessage(Component.translatable("permissions.requires.entity").color(NamedTextColor.RED));
@@ -121,16 +121,16 @@ public class TeleportCommand extends SulfurCommand {
             ? Component.translatable(
                     "commands.teleport.success.location.multiple",
                     Component.text(entities.size()),
-                    Component.text(position.x()),
-                    Component.text(position.y()),
-                    Component.text(position.z())
+                    Component.text(pos(position.x())),
+                    Component.text(pos(position.y())),
+                    Component.text(pos(position.z()))
                 )
             : Component.translatable(
                     "commands.teleport.success.location.single",
                     name(entities.getFirst()),
-                    Component.text(position.x()),
-                    Component.text(position.y()),
-                    Component.text(position.z())
+                    Component.text(pos(position.x())),
+                    Component.text(pos(position.y())),
+                    Component.text(pos(position.z()))
                 )
             );
         }, e1, pos);
@@ -151,16 +151,16 @@ public class TeleportCommand extends SulfurCommand {
             ? Component.translatable(
                     "commands.teleport.success.location.multiple",
                     Component.text(entities.size()),
-                    Component.text(position.x()),
-                    Component.text(position.y()),
-                    Component.text(position.z())
+                    Component.text(pos(position.x())),
+                    Component.text(pos(position.y())),
+                    Component.text(pos(position.z()))
                 )
             : Component.translatable(
                     "commands.teleport.success.location.single",
                     name(entities.getFirst()),
-                    Component.text(position.x()),
-                    Component.text(position.y()),
-                    Component.text(position.z())
+                    Component.text(pos(position.x())),
+                    Component.text(pos(position.y())),
+                    Component.text(pos(position.z()))
                 )
             );
         }, e1, pos, yaw, pitch);
@@ -170,5 +170,8 @@ public class TeleportCommand extends SulfurCommand {
         return entity instanceof Player player
                 ? Component.text(player.getUsername())
                 : Component.translatable(entity.getEntityType().registry().translationKey());
+    }
+    private double pos(double pos) {
+        return (double) Math.round(pos * 1000000) / 1000000;
     }
 }

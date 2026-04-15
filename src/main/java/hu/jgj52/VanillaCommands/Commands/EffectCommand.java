@@ -9,9 +9,8 @@ import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.builder.CommandExecutor;
 import net.minestom.server.command.builder.arguments.*;
 import net.minestom.server.command.builder.arguments.minecraft.ArgumentEntity;
-import net.minestom.server.command.builder.arguments.minecraft.ArgumentResourceLocation;
+import net.minestom.server.command.builder.arguments.minecraft.ArgumentResource;
 import net.minestom.server.command.builder.arguments.number.ArgumentInteger;
-import net.minestom.server.command.builder.suggestion.SuggestionEntry;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.Player;
 import net.minestom.server.potion.Potion;
@@ -20,14 +19,14 @@ import net.minestom.server.potion.TimedPotion;
 
 import java.util.*;
 
-@SuppressWarnings("ConstantConditions")
+@SuppressWarnings({"ConstantConditions"})
 public class EffectCommand extends SulfurCommand {
     public EffectCommand() {
         super("effect");
 
         Component here = Component.translatable("command.context.here").color(NamedTextColor.RED).decoration(TextDecoration.UNDERLINED, false);
 
-        setCondition((commandSender, _) -> !(commandSender instanceof Player player) || new User(player).has("vanilla.command.effect"));
+        setCondition((commandSender, _) -> !(commandSender instanceof Player player) || player.hasPermission("vanilla.command.effect"));
 
         setDefaultExecutor((sender, context) -> {
             sender.sendMessage(Component.translatable("command.unknown.command").color(NamedTextColor.RED));
@@ -37,31 +36,11 @@ public class EffectCommand extends SulfurCommand {
         ArgumentLiteral clearArg = ArgumentType.Literal("clear");
         ArgumentLiteral giveArg = ArgumentType.Literal("give");
         ArgumentEntity entityArg = ArgumentType.Entity("targets");
-        ArgumentResourceLocation effectArg = ArgumentType.ResourceLocation("effect");
+        ArgumentResource effectArg = ArgumentType.Resource("effect", "minecraft:mob_effect");
         ArgumentLiteral infiniteArg = ArgumentType.Literal("infinite");
         ArgumentInteger secondsArg = ArgumentType.Integer("seconds");
         ArgumentInteger amplifierArg = ArgumentType.Integer("amplifier");
         ArgumentBoolean hideArg = ArgumentType.Boolean("hideParticles");
-
-        List<SuggestionEntry> suggest = PotionEffect.values().stream()
-                        .map(effect -> effect.key().asString())
-                        .sorted()
-                        .map(SuggestionEntry::new)
-                        .toList();
-
-        effectArg.setSuggestionCallback((_, context, suggestion) -> {
-            String search = context.getRaw(effectArg);
-            System.out.println(search);
-            suggest.forEach(s -> {
-                if (search == null || search.isBlank()) {
-                    suggestion.addEntry(s);
-                    return;
-                }
-                if (s.getEntry().contains(search)) {
-                    suggestion.addEntry(s);
-                }
-            });
-        });
 
         addSyntax((sender, _) -> {
             if (!(sender instanceof Entity entity)) {

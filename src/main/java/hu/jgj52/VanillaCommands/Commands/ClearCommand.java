@@ -22,7 +22,7 @@ public class ClearCommand extends SulfurCommand {
 
         Component here = Component.translatable("command.context.here").color(NamedTextColor.RED).decoration(TextDecoration.UNDERLINED, false);
 
-        setCondition((commandSender, _) -> !(commandSender instanceof Player player) || new User(player).has("vanilla.command.clear"));
+        setCondition((commandSender, _) -> !(commandSender instanceof Player player) || player.hasPermission("vanilla.command.clear"));
 
         setDefaultExecutor((sender, context) -> {
             sender.sendMessage(Component.translatable("command.unknown.command").color(NamedTextColor.RED));

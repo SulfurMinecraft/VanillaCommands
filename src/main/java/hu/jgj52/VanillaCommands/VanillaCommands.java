@@ -19,6 +19,9 @@ public class VanillaCommands implements Plugin {
         new ClearCommand();
         new DifficultyCommand();
         new EffectCommand();
+        new TimeCommand();
+        new WeatherCommand();
+        new SummonCommand();
 
         MinecraftServer.getCommandManager().setUnknownCommandCallback((sender, command) -> {
             sender.sendMessage(Component.translatable("command.unknown.command").color(NamedTextColor.RED));

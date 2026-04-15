@@ -25,7 +25,7 @@ public class GameModeCommand extends SulfurCommand {
             survival
         }
 
-        setCondition((commandSender, _) -> !(commandSender instanceof Player player) || new User(player).has("vanilla.command.gamemode"));
+        setCondition((commandSender, _) -> !(commandSender instanceof Player player) || player.hasPermission("vanilla.command.gamemode"));
 
         setDefaultExecutor((sender, context) -> {
                 sender.sendMessage(Component.translatable("command.unknown.command").color(NamedTextColor.RED));
